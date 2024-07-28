@@ -1,78 +1,49 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:project/widgets/Add_notes_botton.dart';
-import 'package:project/widgets/custom_text_field.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project/cubits/add_notes_cubit/add%20_note_state.dart';
+import 'package:project/cubits/add_notes_cubit/add_notes_cubit.dart';
+import 'package:project/cubits/notes_cubit.dart/notes_cubit.dart';
+import 'package:project/views/showSnackBar.dart';
+import 'package:project/widgets/Add_note_form.dart';
 
-class AddNoteBottomSheet extends StatelessWidget {
+class AddNoteBottomSheet extends StatefulWidget {
   const AddNoteBottomSheet({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: SingleChildScrollView(
-        child: AddNoteForm(),
-      ),
-    );
-  }
+  State<AddNoteBottomSheet> createState() => _AddNoteBottomSheetState();
 }
 
-class AddNoteForm extends StatefulWidget {
-  const AddNoteForm({
-    super.key,
-  });
-
-  @override
-  State<AddNoteForm> createState() => _AddNoteFormState();
-}
-
-class _AddNoteFormState extends State<AddNoteForm> {
-  final GlobalKey<FormState> formKey = GlobalKey();
-  AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
-  String? title, subTitle;
+class _AddNoteBottomSheetState extends State<AddNoteBottomSheet> {
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: formKey,
-      autovalidateMode: autovalidateMode,
-      child: Column(
-        children: [
-          const SizedBox(
-            height: 30,
+    return BlocProvider(
+      create: (context) => AddNotesCubit(),
+      child:
+          BlocConsumer<AddNotesCubit, AddNoteState>(listener: (context, state) {
+        if (state is AddNoteSuccessState) {
+          BlocProvider.of<NotesCubit>(context).fetchAllNotes();
+          Navigator.pop(context);
+        showSnackBar(context, 'new note added successfully✅  ');
+        
+        }
+        if (state is AddNoteFailureState) {
+          print('Failed${state.errorMessage}');
+        }
+      }, builder: (context, state) {
+        return AbsorbPointer(
+          absorbing: state is AddNoteLoadingState ? true : false,
+          child: Padding(
+            padding: EdgeInsets.only(
+                left: 16,
+                right: 16,
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: const SingleChildScrollView(child: AddNoteForm()),
           ),
-          CustomTextFormField(
-            onSaved: (value) {
-              title = value;
-            },
-            hint: 'title',
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          CustomTextFormField(
-            onSaved: (value) {
-              subTitle = value;
-            },
-            hint:' subTitle',
-            mixLine: 5,
-          ),
-          const SizedBox(
-            height: 70,
-          ),
-          AddNotesBotton(
-            onPressed: () {
-              if (formKey.currentState!.validate()) {
-                formKey.currentState!.save();
-              } else {
-                autovalidateMode = AutovalidateMode.always;
-                setState(() {});
-              }
-            },
-          ),
-          const SizedBox(
-            height: 50,
-          ),
-        ],
-      ),
+        );
+      }),
     );
   }
 }

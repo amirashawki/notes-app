@@ -7,22 +7,30 @@ import 'package:project/models/note_model.dart';
 import 'package:project/views/edit_note_view.dart';
 import 'package:project/views/showSnackBar.dart';
 
-class NotesItem extends StatelessWidget {
+class NotesItem extends StatefulWidget {
   NotesItem({super.key, required this.note});
   final NoteModel note;
 
+  @override
+  State<NotesItem> createState() => _NotesItemState();
+}
+
+class _NotesItemState extends State<NotesItem> {
   final formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return EditNoteView(note: note,);
+          return EditNoteView(
+            note: widget.note,
+          );
         }));
       },
       child: Container(
         decoration: BoxDecoration(
-            color: Color(note.color), borderRadius: BorderRadius.circular(15)),
+            color: Color(widget.note.color), borderRadius: BorderRadius.circular(15)),
         child: Padding(
           padding: const EdgeInsets.only(top: 20, bottom: 20, left: 14),
           child: Column(
@@ -30,23 +38,32 @@ class NotesItem extends StatelessWidget {
             children: [
               ListTile(
                 title: Text(
-                  note.title,
+                  widget.note.title,
                   style: TextStyle(color: Colors.black, fontSize: 20),
                 ),
                 subtitle: Padding(
                   padding: const EdgeInsets.only(top: 10),
                   child: Text(
-                    note.subTitle,
+                    widget.note.subTitle,
                     style: TextStyle(
                         color: Colors.black.withOpacity(0.4), fontSize: 17),
                   ),
                 ),
                 trailing: IconButton(
                   onPressed: () {
-                    note.delete();
-                  showSnackBar(context, 'note is deleted');
-                    BlocProvider.of<NotesCubit>(context).fetchAllNotes();
-                   
+              showSnackBar2(context,  (){widget.note.delete();
+                        BlocProvider.of<NotesCubit>(context).fetchAllNotes();
+                        ScaffoldMessenger.of(context)
+                            .hideCurrentMaterialBanner();}
+   
+                  
+                  
+                  
+                       
+                        
+                            
+                      
+                  );
                   },
                   icon: Icon(
                     FontAwesomeIcons.trash,
@@ -58,7 +75,7 @@ class NotesItem extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(right: 20, top: 10),
                 child: Text(
-                  data(note.date),
+                  data(widget.note.date),
                   style: TextStyle(color: Colors.black.withOpacity(0.4)),
                 ),
               ),

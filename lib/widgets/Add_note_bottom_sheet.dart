@@ -22,12 +22,13 @@ class _AddNoteBottomSheetState extends State<AddNoteBottomSheet> {
     return BlocProvider(
       create: (context) => AddNotesCubit(),
       child:
-          BlocConsumer<AddNotesCubit, AddNoteState>(listener: (context, state) {
+          BlocConsumer<AddNotesCubit, AddNoteState>(
+            listener: (context, state) {
         if (state is AddNoteSuccessState) {
           BlocProvider.of<NotesCubit>(context).fetchAllNotes();
           Navigator.pop(context);
-        showSnackBar(context, 'new note added successfully✅  ');
-        
+        showSnackBar(context, 'note is added   ');
+       
         }
         if (state is AddNoteFailureState) {
           print('Failed${state.errorMessage}');

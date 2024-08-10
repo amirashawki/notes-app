@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:project/cubits/notes_cubit.dart/notes_cubit.dart';
 import 'package:project/models/note_model.dart';
-import 'package:project/views/Home_view.dart';
+import 'package:project/views/splach_screen.dart';
 import 'package:project/widgets/constant.dart';
 import 'package:project/widgets/simple_bloc_observer.dart';
 
@@ -27,8 +27,8 @@ class NotesApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(brightness: Brightness.dark, fontFamily: 'Poppins'),
-        home: HomePage(),
+        home: Splachscreen(),
       ),
     );
   }
-}
+ }
